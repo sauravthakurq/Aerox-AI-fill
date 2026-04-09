@@ -1,0 +1,17 @@
+.DS_Store
+Thumbs.db
+
+*.log
+*.tmp
+*.zip
+*.crx
+*.pem
+
+node_modules/
+dist/
+coverage/
+
+.idea/
+.vscode/
+
+.DS_Store

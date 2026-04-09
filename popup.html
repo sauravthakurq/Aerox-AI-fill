@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aerox AI Fill</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <div class="app-header">
+      <img src="logo.png" alt="Logo" class="app-logo">
+      <div class="app-title">Aerox AI Fill</div>
+    </div>
+    
+    <!-- Tab Navigation -->
+    <div class="tabs">
+      <button id="tab-home" class="tab-btn active">Home</button>
+      <button id="tab-settings" class="tab-btn">Settings</button>
+    </div>
+
+    <!-- Home View -->
+    <div id="view-home" class="view active">
+      <div id="pdf-view">
+        <div class="header">
+          <h2>Upload Document</h2>
+          <p>Drop your PDF here to auto-fill the current form.</p>
+        </div>
+        
+        <div class="upload-zone" id="drop-zone">
+          <input type="file" id="pdf-upload" accept="application/pdf" hidden>
+          <div class="upload-content">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <span class="upload-text">Drag & drop or <span class="browse-link">browse</span></span>
+            <span class="upload-hint">Supports .pdf up to 10MB</span>
+          </div>
+        </div>
+        <div class="toggle-container">
+          <span id="switch-to-text" class="toggle-action-text">Or Paste Text Instead</span>
+        </div>
+      </div>
+
+      <div id="text-view" class="hidden">
+        <div class="header">
+          <h2>Paste Text</h2>
+          <p>Type or paste text directly to auto-fill the form.</p>
+        </div>
+        <textarea id="manual-text-input" class="modern-textarea" placeholder="Paste your context or text here..."></textarea>
+        <div class="toggle-container">
+          <span id="switch-to-pdf" class="toggle-action-text">Upload PDF Instead</span>
+        </div>
+      </div>
+      
+      <div id="file-status" class="status-message hidden">
+        <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"></svg>
+        <span class="status-text"></span>
+      </div>
+      
+      <button id="fill-form-btn" class="primary-btn" disabled>
+        Auto-Fill Form
+      </button>
+
+      <div id="recent-files-container" class="recent-files hidden">
+        <div class="recent-header">
+          <h3>Recent Files</h3>
+          <span id="view-more-recent" class="view-more-btn hidden">View all</span>
+        </div>
+        <ul id="recent-files-list"></ul>
+      </div>
+    </div>
+
+    <!-- Settings View -->
+    <div id="view-settings" class="view">
+      <div class="header settings-header">
+        <div>
+          <h2>Configuration</h2>
+          <p>Set up your AI provider.</p>
+        </div>
+        <div id="save-status" class="save-status"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="ai-provider">AI Provider</label>
+        <div class="select-wrapper">
+          <select id="ai-provider" class="auto-save">
+            <option value="openai">OpenAI</option>
+            <option value="anthropic">Anthropic</option>
+            <option value="gemini">Google Gemini</option>
+            <option value="groq">Groq</option>
+            <option value="custom">Custom Setup</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="model-select">Model</label>
+        <div class="select-wrapper">
+          <select id="model-select" class="auto-save">
+            <option value="gpt-4o">gpt-4o</option>
+            <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+            <option value="claude-3-sonnet">claude-3-sonnet</option>
+            <option value="llama-3.1-8b-instant">llama-3.1-8b-instant</option>
+            <option value="custom">Custom Model</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group hidden" id="custom-model-group">
+        <label for="custom-model">Custom Model Name</label>
+        <input type="text" id="custom-model" class="auto-save" placeholder="my-custom-model-v1">
+      </div>
+
+      <div class="form-group">
+        <label for="api-key" style="display: flex; align-items: center; justify-content: space-between;">
+          <span>API Key</span>
+          <svg id="open-fallback-modal" class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; cursor: pointer; color: var(--accent-color);"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        </label>
+        <input type="password" id="api-key" class="auto-save" placeholder="sk-...">
+      </div>
+
+      <div class="form-group hidden" id="base-url-group">
+        <label for="base-url">Base URL</label>
+        <input type="text" id="base-url" class="auto-save" placeholder="https://api.yourprovider.com/v1">
+      </div>
+
+      <div class="test-buttons">
+        <button id="test-conn-btn" class="test-btn">Test Connection</button>
+        <button id="test-model-btn" class="test-btn">Test Model</button>
+      </div>
+      <!-- Removed Save button for auto-save feature -->
+    </div>
+    
+    <div class="footer">
+      Designed and developed by Saurav Thakur
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Fallback API Modal -->
+  <div id="fallback-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Fallback API Keys</h3>
+        <button id="close-modal" class="close-btn">&times;</button>
+      </div>
+      <p class="modal-desc">Add up to 7 secondary API keys. If your main key fails or hits a rate limit, Aerox AI instantly shifts to the next working key to ensure zero interruptions.</p>
+      
+      <div id="fallback-list" class="fallback-list"></div>
+      
+      <button id="add-fallback-btn" class="add-btn">+ Add Secondary Key</button>
+      <button id="save-fallback-btn" class="primary-btn" style="width: 100%; margin-top: 14px;">Save Fallbacks</button>
+    </div>
+  </div>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
