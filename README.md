@@ -1,9 +1,10 @@
+
 # Aerox AI Fill
 
 Effortlessly supercharge web forms with intelligence. Extract context directly from your documents or clipboard, and let AI automatically populate fields for you. Crafted with a premium, seamless glassmorphism UI for high-performance professionals.
 
 <p align="center">
-  <img src="./assets/ui-autofill.png" width="800" alt="Aerox AI Fill Demo" />
+  <img src="./assets/demo.gif" width="800" alt="Aerox AI Fill Demo" />
 </p>
 
 ## Features
@@ -98,7 +99,7 @@ If using a Custom provider, specify the base endpoint carefully:
 - [ ] Auto-detect forms on page load without manual trigger
 - [ ] Customizable System Prompts for advanced prompt engineers
 - [ ] Multi-language support mapping
-- [ ] Direct export options to JSON/CSV 
+- [ ] Direct export options to JSON/CSV
 
 ## Contributing
 
